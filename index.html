@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Makenna, will you be my Valentine? ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Pacifico&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #ffd1ff, #fbc2eb);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            font-family: 'Pacifico', cursive;
+            overflow: hidden;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .emoji-deco {
+            position: fixed;
+            font-size: 4rem;
+            z-index: 5;
+            pointer-events: none;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+            user-select: none;
+        }
+
+        .corner-left { top: 20px; left: 20px; animation: swing 3s ease-in-out infinite alternate; }
+        .corner-right { top: 20px; right: 20px; font-size: 3rem; animation: float 4s ease-in-out infinite; }
+        .bottom-deco { position: relative; margin-top: 30px; font-size: 3.5rem; animation: bounce 2s infinite; opacity: 0.9; }
+
+        @keyframes swing { 0% { transform: rotate(-10deg); } 100% { transform: rotate(10deg); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        .bg-symbol {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.4);
+            z-index: -1;
+            user-select: none;
+            animation: floatUp linear forwards;
+        }
+        @keyframes floatUp {
+            to { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
+
+        .main-gif {
+            width: 250px; 
+            height: auto;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15));
+            animation: fadeInUp 0.8s ease-out;
+            z-index: 20;
+            border-radius: 15px;
+        }
+
+        h1 {
+            color: #d32f2f;
+            font-size: 3.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            margin-top: 0;
+            text-shadow: 3px 3px 6px rgba(255, 255, 255, 0.8);
+            animation: fadeInUp 1s ease-out;
+            line-height: 1.2;
+            z-index: 20;
+        }
+
+        .buttons-container {
+            display: flex;
+            gap: 25px;
+            animation: fadeInUp 1.2s ease-out;
+            flex-wrap: wrap;
+            justify-content: center;
+            z-index: 20;
+        }
+
+        button {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            padding: 15px 50px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s; 
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            white-space: nowrap;
+        }
+
+        #yesBtn {
+            background: linear-gradient(45deg, #ff512f, #dd2476);
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        #yesBtn:hover {
+            transform: scale(1.1) translateY(-3px);
+            box-shadow: 0 15px 30px rgba(221, 36, 118, 0.4);
+        }
+
+        #noBtn {
+            background-color: rgba(255, 255, 255, 0.95);
+            color: #dd2476;
+            border: 3px solid #ffdde1;
+            z-index: 30;
+            transition: left 0.2s ease, top 0.2s ease; 
+        }
+
+        #popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.5s;
+            padding: 20px;
+            box-sizing: border-box;
+            cursor: pointer; /* 鼠标变成手型，提示可以点击关闭 */
+        }
+
+        .popup-content {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            border: 2px solid rgba(255, 255, 255, 1);
+            transform: scale(0.8);
+            animation: popIn 0.5s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 90%;
+            cursor: default; /* 内容区域恢复默认鼠标 */
+        }
+        
+        /* 防止点击内容时误关闭，阻止事件冒泡的辅助样式 */
+        .popup-content * {
+            pointer-events: none; /* 让点击穿透到 content 容器处理，或者简单点直接用 JS 判断 target */
+        }
+
+        .popup-content h2 {
+            color: #d32f2f;
+            font-size: 3.5rem;
+            margin: 20px 0;
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .popup-gif {
+            width: 220px;
+            height: auto;
+            margin-bottom: 10px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); box-shadow: 0 0 25px rgba(221, 36, 118, 0.5); }
+            100% { transform: scale(1); }
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { to { transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+    <div class="emoji-deco corner-left">🎀</div>
+    <div class="emoji-deco corner-right">✨💕</div>
+
+    <img src="cat-main.gif" alt="Happy Cat" class="main-gif" onerror="this.src='https://media.tenor.com/Fe71M738u14AAAAC/happy-cat-happy-happy-cat.gif'">
+
+    <h1>Would you like to be my Valentine?</h1>
+    
+    <div class="buttons-container">
+        <button id="yesBtn">Yes ❤️</button>
+        <button id="noBtn">No 😢</button>
+    </div>
+
+    <div class="emoji-deco bottom-deco">🧸</div>
+
+    <div id="popup">
+        <div class="popup-content">
+            <img src="cat-dance.gif" alt="Happy Celebration" class="popup-gif" onerror="this.src='https://media.tenor.com/lM0V6Zt3eXkAAAAC/happy-happy-happy-cat.gif'">
+            <h2>Yes! I love you babe!</h2>
+            <p style="font-size: 1.4rem; color: #c0392b; font-family: 'Dancing Script', cursive; margin-top: 10px;">(我就知道你会选这个的~)</p>
+        </div>
+    </div>
+
+    <script>
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const popup = document.getElementById('popup');
+
+        yesBtn.addEventListener('click', () => {
+            popup.style.display = 'flex';
+            fireConfetti();
+        });
+
+        // ------------------------------------------
+        // 🔥 新增逻辑：点击弹窗背景关闭 (Click Outside to Close)
+        // ------------------------------------------
+        popup.addEventListener('click', (e) => {
+            // e.target 是你实际点击的元素
+            // popup 是背景容器
+            // 如果点击的是背景本身 (id="popup")，而不是里面的 .popup-content，则关闭
+            if (e.target === popup) {
+                popup.style.display = 'none';
+            }
+        });
+
+        const SAFE_DISTANCE = 150; 
+
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            const rect = noBtn.getBoundingClientRect();
+            const btnX = rect.left + rect.width / 2;
+            const btnY = rect.top + rect.height / 2;
+            const distance = Math.sqrt(Math.pow(mouseX - btnX, 2) + Math.pow(mouseY - btnY, 2));
+
+            if (distance < SAFE_DISTANCE) {
+                moveButton();
+            }
+        });
+
+        noBtn.addEventListener('touchstart', (e) => { 
+            e.preventDefault(); 
+            moveButton(); 
+        }, { passive: false });
+
+        function moveButton() {
+            const paddingX = 30;
+            const paddingY = 50;
+            const maxWidth = window.innerWidth - noBtn.offsetWidth - paddingX * 2;
+            const maxHeight = window.innerHeight - noBtn.offsetHeight - paddingY * 2;
+            const randomX = Math.max(0, Math.random() * maxWidth) + paddingX;
+            const randomY = Math.max(0, Math.random() * maxHeight) + paddingY;
+
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+            
+            const noTexts = ["No 😢", "Are you sure?", "Really?", "Think again!", "Don't do this!", "Try the other one!"];
+            noBtn.innerText = noTexts[Math.floor(Math.random() * noTexts.length)];
+        }
+
+        function createSymbol() {
+            const symbol = document.createElement('div');
+            symbol.classList.add('bg-symbol');
+            const chars = ['❤', '💖', '✨', '🌸', '🧸', '💕'];
+            symbol.innerHTML = chars[Math.floor(Math.random() * chars.length)];
+            
+            symbol.style.left = Math.random() * 95 + 'vw'; 
+            symbol.style.animationDuration = Math.random() * 3 + 4 + 's'; 
+            symbol.style.fontSize = Math.random() * 25 + 15 + 'px'; 
+            symbol.style.opacity = Math.random() * 0.5 + 0.2; 
+            
+            document.body.appendChild(symbol);
+            setTimeout(() => { symbol.remove(); }, 7000);
+        }
+        
+        setInterval(createSymbol, 100); 
+
+        function fireConfetti() {
+            const duration = 3 * 1000;
+            const end = Date.now() + duration;
+            (function frame() {
+                confetti({ particleCount: 7, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff0000', '#ff69b4', '#ffffff', '#ffd700'] });
+                confetti({ particleCount: 7, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff0000', '#ff69b4', '#ffffff', '#ffd700'] });
+                if (Date.now() < end) { requestAnimationFrame(frame); }
+            }());
+        }
+    </script>
+</body>
+</html>
